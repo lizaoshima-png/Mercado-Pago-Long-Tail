@@ -1,0 +1,1102 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Long Tail Mercado Pago</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#05080F; --bg-2:#0A0F1C; --surface:#11182B; --surface-2:#161E36;
+  --line:rgba(255,255,255,.12); --line-soft:rgba(255,255,255,.06);
+  --text:#E8EDF7; --dim:#8893A8; --mute:#5D6679;
+  --blip:#0096FA; --blip-2:#00C2FF; --blip-dim:#0078C8;
+  --client:#F2B705; --client-2:#FFD24D; --line-client:rgba(242,183,5,.16);
+  --green:#25D366; --red:#FF6B6B; --white:#FFFFFF;
+  --mono:'JetBrains Mono',ui-monospace,monospace; --sans:'Lexend',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;
+  padding-left:16px;padding-right:16px;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(760px 480px at 12% -6%, rgba(0,150,250,.16), transparent 60%),
+  radial-gradient(820px 520px at 100% 8%, rgba(242,183,5,.08), transparent 60%),
+  var(--bg);}
+img{max-width:100%}
+[hidden]{display:none!important}
+h1,h2,h3{font-weight:700;letter-spacing:-.5px;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--blip-2)}
+.container{max-width:1080px;margin:0 auto;padding:0 4px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--client);font-weight:600}
+.accent{color:var(--blip-2)}
+.tagx{font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:5px;font-weight:600}
+.tagx.a{background:rgba(0,150,250,.16);color:var(--blip-2)}
+.tagx.y{background:rgba(242,183,5,.14);color:var(--client)}
+.tagx.h{background:rgba(37,211,102,.14);color:var(--green)}
+.tagx.s{background:rgba(255,255,255,.08);color:var(--dim)}
+
+/* ---- gate ---- */
+#gate{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);padding:24px;}
+#gate::before{content:'';position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(700px 460px at 20% 10%, rgba(0,150,250,.18), transparent 60%),
+  radial-gradient(700px 460px at 90% 90%, rgba(242,183,5,.10), transparent 60%), var(--bg);}
+.gate-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:18px;padding:32px 28px;text-align:center}
+.gate-mark{width:46px;height:46px;margin:0 auto 18px;border-radius:13px;background:linear-gradient(135deg,var(--blip),var(--blip-2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;color:#04121f}
+.gate-card h2{font-size:19px;margin-bottom:6px}
+.gate-card p{color:var(--dim);font-size:13px;margin-bottom:20px}
+.gate-card input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg-2);color:var(--text);font-family:var(--sans);font-size:14px;margin-bottom:12px;outline:none}
+.gate-card input:focus{border-color:var(--blip)}
+.gate-card button{width:100%;padding:12px 14px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,var(--blip),var(--blip-2));color:#04121f;font-weight:700;
+  font-size:14px;cursor:pointer;font-family:var(--sans)}
+.gate-err{color:var(--red);font-size:12.5px;margin-top:10px;min-height:16px}
+.gate-card.shake{animation:shake .38s}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+
+/* ---- topbar / tabs ---- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:rgba(5,8,15,.86);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft);padding:14px 0}
+.topbar-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;white-space:nowrap}
+.brand .mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--blip),var(--blip-2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#04121f;font-size:13px}
+.brand .x{color:var(--mute);font-weight:400}
+.brand .client{color:var(--client)}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:var(--mono);font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--dim);background:transparent;border:1px solid transparent;padding:8px 13px;border-radius:9px;
+  cursor:pointer;white-space:nowrap;font-weight:500}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);background:var(--surface);border-color:var(--line)}
+
+main{max-width:1080px;margin:0 auto;padding-bottom:60px}
+.panel{display:none}
+.panel.active{display:block}
+.section-title{padding:52px 0 6px}
+.section-title h2{font-size:27px;margin:10px 0 12px}
+.section-title p{color:var(--dim);font-size:14.5px;max-width:66ch;line-height:1.6}
+
+.src-line{margin-top:28px;padding-top:14px;border-top:1px solid var(--line-soft);
+  font-size:11.5px;color:var(--mute);line-height:1.7}
+.src-line b{color:var(--dim);font-weight:600}
+.confidential{text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:1px;
+  color:var(--mute);padding:34px 0 50px}
+
+/* ---- Visão ---- */
+.hero{padding:56px 0 30px}
+.hero h1{font-size:38px;line-height:1.14;margin:16px 0 18px}
+.hero p.lead{color:var(--dim);font-size:15.5px;line-height:1.65;max-width:70ch}
+.istats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:32px 0 18px}
+.istat{background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;padding:20px 16px}
+.istat .n{font-size:25px;font-weight:800;color:var(--blip-2);font-variant-numeric:tabular-nums}
+.istat .l{font-size:12px;color:var(--dim);margin-top:4px}
+.awards{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 40px}
+.award{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;color:var(--dim);
+  border:1px solid var(--line-soft);border-radius:20px;padding:6px 13px;background:var(--bg-2)}
+.band{background:var(--surface);border:1px solid var(--line-soft);border-radius:16px;padding:24px 26px;margin:8px 0 42px}
+.band .k{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--client);display:block;margin-bottom:8px}
+.band p{font-size:14.5px;color:var(--dim);line-height:1.65}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
+.col{background:var(--surface);border:1px solid var(--line-soft);border-radius:16px;padding:24px}
+.col h3{font-size:15.5px;margin-bottom:12px}
+.col.moment h3{color:var(--client)}
+.col.why h3{color:var(--blip-2)}
+.col ul{margin:0;padding-left:18px;color:var(--dim);font-size:13.5px;line-height:1.75}
+.col ul li{margin-bottom:6px}
+.col .q{margin-top:14px;padding:12px 14px;border-left:2px solid var(--line);font-size:13px;color:var(--dim);font-style:italic}
+
+/* ---- Diagnóstico ---- */
+.covgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:22px 0 8px}
+.covcell{background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;padding:14px 10px;text-align:center}
+.covcell .band-lbl{font-size:10.5px;color:var(--dim);margin-bottom:8px;line-height:1.3}
+.covcell .pct{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.covcell.crit .pct{color:var(--red)}
+.covcell.ok .pct{color:var(--green)}
+.covnote{font-size:11.5px;color:var(--mute);margin:10px 0 30px}
+.chain{display:flex;align-items:stretch;gap:8px;margin:26px 0;flex-wrap:wrap}
+.chain-node{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;padding:16px}
+.chain-node.hot{border-color:var(--line-client);background:linear-gradient(160deg,rgba(242,183,5,.07),var(--surface))}
+.chain-node .t{font-weight:600;font-size:13.5px;margin-bottom:5px}
+.chain-node .d{font-size:12px;color:var(--dim);line-height:1.5}
+.chain-arrow{display:flex;align-items:center;color:var(--mute);font-size:16px}
+.prodgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0 10px}
+.pil{background:var(--surface);border:1px solid var(--line-soft);border-radius:16px;padding:22px}
+.pil.warn{border-color:rgba(255,107,107,.28);background:linear-gradient(160deg,rgba(255,107,107,.06),var(--surface))}
+.pil .k{font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mute);display:block;margin-bottom:10px}
+.pil p{font-size:13.5px;color:var(--dim);line-height:1.65}
+.quote-block{border-left:2px solid var(--blip);padding:14px 18px;margin:14px 0;background:var(--bg-2);border-radius:0 10px 10px 0}
+.quote-block p{font-size:14px;font-style:italic;color:var(--text)}
+.quote-block .who{margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:1px}
+
+/* ---- Solução ---- */
+.badge-v1{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  padding:5px 12px;border-radius:6px;background:rgba(0,150,250,.16);color:var(--blip-2);margin-bottom:16px;font-weight:600}
+.hypocard{background:var(--surface);border:1px solid var(--blip-dim);border-radius:18px;padding:28px;margin-bottom:30px;
+  box-shadow:0 0 60px rgba(0,150,250,.08)}
+.hypocard .k{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blip-2);margin-bottom:10px;display:block}
+.hypocard p{font-size:16.5px;line-height:1.6;color:var(--text)}
+.trigsplit{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:10px 0 30px}
+.trig{background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;padding:20px}
+.trig.pref{border-color:var(--line-client)}
+.trig .tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--client);margin-bottom:8px;display:block}
+.trig.pref .tag{color:var(--client)}
+.trig p{font-size:13px;color:var(--dim);line-height:1.6}
+.journey{display:flex;flex-direction:column;gap:0;margin:24px 0 36px}
+.jstep{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line-soft)}
+.jstep:last-child{border-bottom:none}
+.jstep .num{font-family:var(--mono);font-size:13px;color:var(--blip-2);font-weight:700;flex-shrink:0;width:26px}
+.jstep .body b{font-size:13.5px}
+.jstep .body p{font-size:13px;color:var(--dim);margin-top:4px;line-height:1.6}
+.casegrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0 12px}
+.casecard{background:var(--surface);border:1px solid var(--line-soft);border-radius:16px;padding:22px}
+.casecard .src{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mute);margin-bottom:12px;display:block}
+.casenums{display:flex;gap:22px;margin:10px 0}
+.casenums .cn{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+.casenums .cn.good{color:var(--green)}
+.casenums .cn.bad{color:var(--red)}
+.casenums .cl{font-size:10.5px;color:var(--mute);margin-top:2px}
+.casecard p{font-size:12.5px;color:var(--dim);line-height:1.55}
+.formula{background:var(--bg-2);border:1px dashed var(--line);border-radius:12px;padding:18px 20px;margin:18px 0 30px;
+  font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.9}
+.formula .gap{color:var(--red)}
+.agreed{background:var(--surface);border:1px solid rgba(37,211,102,.22);border-radius:16px;padding:22px;margin:10px 0 30px}
+.agreed h3{font-size:14px;color:var(--green);margin-bottom:12px}
+.agreed ul{margin:0;padding-left:18px;font-size:13px;color:var(--dim);line-height:1.85}
+.checklist{display:flex;flex-direction:column;gap:10px;margin:10px 0 20px}
+.check-item{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:10px;padding:12px 14px;font-size:13px;color:var(--dim)}
+.check-item .box{flex-shrink:0;width:15px;height:15px;border-radius:4px;border:1.5px solid var(--mute);margin-top:1px}
+
+/* ---- Jornada ---- */
+.segs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0 36px}
+.seg{background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;padding:18px}
+.seg .t{font-weight:600;font-size:13.5px;color:var(--client);margin-bottom:6px}
+.seg .d{font-size:12px;color:var(--dim);line-height:1.55}
+.mock-wrap{display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;margin:20px 0 20px}
+.phone{width:min(320px,100%);aspect-ratio:9/19.3;background:#000;border-radius:38px;padding:9px;
+  box-shadow:0 40px 80px rgba(0,0,0,.55);flex-shrink:0}
+.phone-screen{width:100%;height:100%;border-radius:29px;overflow:hidden;background:#0B141A;
+  display:flex;flex-direction:column;position:relative}
+.wa-header{background:#1F2C33;display:flex;align-items:center;gap:10px;padding:13px 14px}
+.wa-header .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blip),var(--blip-2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#04121f;font-size:14px;flex-shrink:0}
+.wa-header .who .name{font-size:14px;font-weight:600;color:#E9EDEF;display:flex;align-items:center;gap:4px}
+.wa-header .who .name .v{color:#53BDEB;font-size:12px}
+.wa-header .who .status{font-size:10.5px;color:#8696A0;margin-top:1px}
+.wa-body{flex:1;overflow-y:auto;padding:14px 9px;display:flex;flex-direction:column;gap:7px;
+  background:#0B141A;background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px);background-size:16px 16px}
+.msg{max-width:80%;display:none;font-size:12.5px;line-height:1.42;flex-direction:column}
+.msg.show{display:flex}
+.msg .bubble{padding:8px 10px;border-radius:9px}
+.msg.in{align-self:flex-start}
+.msg.in .bubble{background:#1F2C33;color:#E9EDEF;border-top-left-radius:2px}
+.msg.out{align-self:flex-end}
+.msg.out .bubble{background:#005C4B;color:#E9EDEF;border-top-right-radius:2px}
+.msg .tpl-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:#53BDEB;margin-bottom:3px}
+.msg .time{align-self:flex-end;font-size:9px;color:#8696A0;margin-top:3px}
+.msg.img .bubble{padding:4px;display:flex;align-items:center;justify-content:center}
+.msg.img .ph{width:150px;height:110px;border-radius:6px;background:linear-gradient(135deg,#2A3942,#0B141A);
+  display:flex;align-items:center;justify-content:center;font-size:26px}
+.msg.audio .bubble{display:flex;align-items:center;gap:8px}
+.qr-group{display:none;flex-direction:column;gap:6px;align-self:flex-start;max-width:80%;margin-top:2px}
+.qr-group.show{display:flex}
+.qr{background:#1F2C33;border:1px solid rgba(83,189,235,.35);color:#53BDEB;font-size:12px;
+  text-align:center;padding:8px 10px;border-radius:8px;font-weight:500}
+.pcard{display:none;align-self:flex-start;max-width:80%;background:#1F2C33;border-radius:10px;overflow:hidden;font-size:11.5px}
+.pcard.show{display:block}
+.pcard .ph2{padding:9px 11px;font-weight:600;color:#E9EDEF;border-bottom:1px solid rgba(255,255,255,.07)}
+.pcard .pb{padding:9px 11px;color:#8696A0;display:flex;flex-direction:column;gap:5px}
+.pcard .pb .row{display:flex;justify-content:space-between;gap:10px}
+.pcard .pb .tag2{font-family:var(--mono);font-size:9px;color:var(--client);text-transform:uppercase}
+.mock-cap{flex:1;min-width:250px;padding-top:14px}
+.mock-cap .step-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--client)}
+.mock-cap h3{font-size:18px;margin:9px 0 10px}
+.mock-cap p{color:var(--dim);font-size:13.5px;line-height:1.6}
+.mock-nav{display:flex;align-items:center;gap:14px;margin-top:22px}
+.mock-btn{background:var(--surface);border:1px solid var(--line);color:var(--text);padding:9px 17px;
+  border-radius:9px;font-size:13px;cursor:pointer;font-family:var(--sans)}
+.mock-btn:hover{border-color:var(--blip)}
+.mock-btn:disabled{opacity:.35;cursor:default}
+.mock-count{font-family:var(--mono);font-size:11.5px;color:var(--mute)}
+.mock-dots{display:flex;gap:5px;margin-top:14px;flex-wrap:wrap;max-width:220px}
+.mock-dots span{width:6px;height:6px;border-radius:50%;background:var(--line-soft)}
+.mock-dots span.active{background:var(--blip-2)}
+.roi-note{background:var(--bg-2);border:1px dashed var(--line);border-radius:12px;padding:16px 18px;margin:30px 0;
+  font-size:12.5px;color:var(--dim);line-height:1.7}
+.roi-note b{color:var(--client)}
+
+/* ---- Arquitetura (Anexo A) ---- */
+.arch-hero{padding:52px 0 28px}
+.hero-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:54px;align-items:start}
+.hero-grid h1{font-size:38px;font-weight:800;line-height:1.1;letter-spacing:-1.2px}
+.hero-grid p{margin-top:18px;color:var(--dim);font-weight:300;font-size:14.5px;max-width:60ch}
+.hero-meta{border-left:1px solid var(--line-soft);padding-left:26px;display:flex;flex-direction:column;gap:16px}
+.hero-meta .label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mute);margin-bottom:5px}
+.hero-meta .value{display:block;font-size:13.5px;color:var(--text);font-weight:500}
+.legend{display:flex;gap:26px;margin:20px 0 6px;flex-wrap:wrap}
+.legend .item{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--dim);font-weight:300}
+.legend .ln{width:28px;height:0;border-top:2px solid}
+.legend .ln.blue{border-color:var(--blip)}.legend .ln.green{border-color:var(--green);border-top-style:dashed}.legend .ln.white{border-color:rgba(255,255,255,.6)}
+.stage{margin:24px 0 14px;padding:38px 30px 42px;border-radius:22px;border:1px solid var(--line-soft);
+  background:linear-gradient(180deg,var(--bg-2),rgba(10,15,28,.4));position:relative;overflow:hidden}
+.stage::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:24px 24px;opacity:.6;pointer-events:none}
+.stage>*{position:relative;z-index:1}
+.badge-real{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  padding:5px 12px;border-radius:6px;background:var(--line-client);color:var(--client);margin-bottom:16px;font-weight:600}
+.band-label{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mute);margin-bottom:13px}
+.channel{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.chan-node{display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:12px;border:1px solid var(--line-soft);background:var(--surface)}
+.chan-node.wa{border-color:rgba(37,211,102,.4);background:linear-gradient(135deg,rgba(37,211,102,.12),rgba(37,211,102,.03))}
+.chan-node .ic{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.chan-node.wa .ic{background:var(--green);color:#04121f;font-weight:800}
+.chan-node .nm{font-size:12.5px;font-weight:500}.chan-node .sub{font-size:10px;color:var(--mute);font-family:var(--mono)}
+.vconn{display:flex;flex-direction:column;align-items:center;margin:6px 0}
+.vconn .ll{width:2px;height:28px;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(0,150,250,.5))}
+.vconn .ar{color:rgba(255,255,255,.6);font-size:12px;margin-top:-6px}
+.hub{margin:0 auto;max-width:780px;border-radius:17px;border:1px solid var(--blip);
+  background:linear-gradient(135deg,rgba(0,150,250,.16),rgba(0,150,250,.04));padding:20px 26px;
+  display:flex;align-items:center;justify-content:space-between;gap:22px;box-shadow:0 0 46px rgba(0,150,250,.18);flex-wrap:wrap}
+.hub-left{display:flex;align-items:center;gap:15px}
+.hub-mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--blip),var(--blip-2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#04121f;flex-shrink:0}
+.hub-txt .t{font-size:16px;font-weight:700;letter-spacing:-.3px}.hub-txt .s{font-size:11.5px;color:var(--dim);font-weight:300;margin-top:3px;max-width:44ch}
+.hub-proto{display:flex;gap:7px;flex-wrap:wrap}
+.hub-proto .p{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:1px;padding:6px 10px;border-radius:8px;
+  background:rgba(0,150,250,.16);color:var(--blip-2);border:1px solid var(--line)}
+.vconn-split{display:flex;justify-content:space-around;margin:6px 0 13px}
+.vconn-split .ll{width:2px;height:24px;background:linear-gradient(180deg,rgba(0,150,250,.5),rgba(0,150,250,.15))}
+.split{display:grid;grid-template-columns:1fr 120px 1fr;gap:0;align-items:stretch}
+.side{border-radius:17px;padding:20px 18px}
+.side.aqui{border:1px solid var(--line);background:linear-gradient(160deg,rgba(0,150,250,.07),transparent)}
+.side.la{border:1px solid var(--line-client);background:linear-gradient(160deg,rgba(242,183,5,.05),transparent)}
+.side-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;gap:8px}
+.side-head .h{font-size:13.5px;font-weight:700;letter-spacing:-.2px}
+.side-head .where{font-family:var(--mono);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:4px 9px;border-radius:6px;flex-shrink:0}
+.side.aqui .where{background:rgba(0,150,250,.14);color:var(--blip-2)}.side.la .where{background:var(--line-client);color:var(--client)}
+.node{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:11px;background:var(--surface);
+  border:1px solid var(--line-soft);margin-bottom:8px;transition:transform .25s,border-color .25s}
+.node:last-child{margin-bottom:0}.node:hover{transform:translateX(3px);border-color:var(--line)}
+.node .dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.side.aqui .node .dot{background:var(--blip-2);box-shadow:0 0 10px rgba(0,150,250,.6)}
+.side.la .node .dot{background:var(--client);box-shadow:0 0 10px rgba(242,183,5,.5)}
+.side.la .node.human .dot{background:var(--green);box-shadow:0 0 10px rgba(37,211,102,.5)}
+.node .nbody{flex:1;min-width:0}
+.node .nt{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;margin-bottom:3px;flex-wrap:wrap}
+.node .nd{font-size:11px;color:var(--dim);font-weight:300;line-height:1.4}
+.bridge{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 4px}
+.flow{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.flow .proto{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1px;padding:6px 11px;
+  border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--blip-2);white-space:nowrap}
+.flow .proto.mcp{color:var(--green);border-color:rgba(37,211,102,.3)}
+.arrows{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%}
+.arr-line{position:relative;width:100%;height:2px;background:repeating-linear-gradient(90deg,var(--blip) 0 8px,transparent 8px 14px);animation:dash 1s linear infinite}
+.arr-line.g{background:repeating-linear-gradient(90deg,var(--green) 0 8px,transparent 8px 14px)}
+@keyframes dash{to{background-position:14px 0}}
+.arr-bi{font-size:12px;color:var(--blip-2);letter-spacing:-2px}.arr-bi.g{color:var(--green)}
+.bridge-note{font-size:10px;color:var(--mute);text-align:center;font-weight:300;line-height:1.4;max-width:110px}
+.principle{margin-top:18px;padding:20px 24px;border-radius:15px;display:flex;align-items:center;gap:16px}
+.principle.hybrid{border:1px solid var(--line-client);background:linear-gradient(135deg,rgba(242,183,5,.06),transparent)}
+.principle.guard{border:1px solid rgba(37,211,102,.25);background:linear-gradient(135deg,rgba(37,211,102,.05),transparent)}
+.principle .q{font-size:26px;font-weight:800;line-height:1;flex-shrink:0}
+.principle.hybrid .q{color:var(--client)}.principle.guard .q{color:var(--green)}
+.principle .pt{font-size:14px;font-weight:300;color:var(--text);line-height:1.5}.principle .pt b{font-weight:700}
+.meta-foot{margin-top:16px;padding:22px 26px;border-radius:15px;border:1px solid var(--line-soft);background:var(--surface);
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px 36px}
+.meta-foot .row{font-size:12.5px;color:var(--dim);font-weight:300}
+.meta-foot .row .k{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--blip-2);margin-right:7px}
+.meta-foot .row .k.y{color:var(--client)}
+.whycards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0 20px}
+.whycards .pil{padding:18px}
+.whycards .pil .k{margin-bottom:8px}
+.whycards .pil p{font-size:12.5px}
+
+/* ---- Próximos passos ---- */
+.phasegrid{display:flex;flex-direction:column;gap:14px;margin:22px 0 36px}
+.phase{display:grid;grid-template-columns:130px 1fr;gap:20px;background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:14px;padding:20px}
+.phase.now{border-color:var(--blip-dim)}
+.phase .ph-tag{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--blip-2);font-weight:700}
+.phase .ph-when{font-size:10.5px;color:var(--mute);margin-top:4px}
+.phase .ph-body b{font-size:13.5px}
+.phase .ph-body p{font-size:12.5px;color:var(--dim);margin-top:5px;line-height:1.6}
+.gapgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0 36px}
+.gapitem{display:flex;gap:10px;align-items:flex-start;background:var(--bg-2);border:1px solid var(--line-soft);
+  border-radius:10px;padding:12px 14px}
+.gapitem .dot2{width:6px;height:6px;border-radius:50%;background:var(--red);margin-top:6px;flex-shrink:0}
+.gapitem p{font-size:12.5px;color:var(--dim);line-height:1.55}
+.deadline{background:linear-gradient(135deg,rgba(242,183,5,.1),transparent);border:1px solid var(--line-client);
+  border-radius:16px;padding:24px 26px;margin:10px 0 30px}
+.deadline .k{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--client);display:block;margin-bottom:8px}
+.deadline p{font-size:14px;color:var(--text);line-height:1.6}
+
+/* ---- responsive ---- */
+@media(max-width:900px){
+  .hero-grid,.split{grid-template-columns:1fr}.hero-meta{border-left:none;padding-left:0;padding-top:10px}
+  .stage{padding:22px 14px}.hub{flex-direction:column;align-items:flex-start}
+  .bridge{flex-direction:row;padding:14px 0}.bridge-note{max-width:none}
+  .vconn-split{display:none}.meta-foot{grid-template-columns:1fr;padding:18px}
+  .istats{grid-template-columns:repeat(2,1fr)}
+  .two,.prodgrid,.casegrid,.segs,.trigsplit,.whycards{grid-template-columns:1fr}
+  .covgrid{grid-template-columns:repeat(3,1fr)}
+  .phase{grid-template-columns:1fr}
+  .gapgrid{grid-template-columns:1fr}
+  .mock-wrap{gap:24px}
+  h1,.hero h1,.hero-grid h1{font-size:28px}
+}
+</style>
+
+<div id="gate">
+  <div class="gate-card" id="gateCard">
+    <div class="gate-mark">b</div>
+    <h2>Long Tail — Mercado Pago</h2>
+    <p>Material de apoio confidencial · Blip × Mercado Pago</p>
+    <input type="password" id="gateInput" placeholder="Senha de acesso" autocomplete="off">
+    <button id="gateBtn">Entrar</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="mark">b</span> Blip <span class="x">×</span> <span class="client">Mercado Pago</span></div>
+      <nav class="tabs">
+        <button class="tab active" data-tab="visao">Visão</button>
+        <button class="tab" data-tab="diagnostico">Diagnóstico</button>
+        <button class="tab" data-tab="solucao">Solução</button>
+        <button class="tab" data-tab="jornada">Jornada</button>
+        <button class="tab" data-tab="arch">Arquitetura</button>
+        <button class="tab" data-tab="proximos">Próximos passos</button>
+        <button class="tab" data-tab="sobre">Sobre a Blip</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+
+    <!-- ===================== VISÃO ===================== -->
+    <section class="panel active" id="panel-visao">
+      <div class="container">
+        <div class="hero">
+          <div class="eyebrow">Blip × Mercado Pago · Farming — Long Tail (2–10k)</div>
+          <h1>O Mercado Pago já fala com o Long Tail.<br>A pergunta é se essa conversa <span class="accent">vale mais do que um disparo.</span></h1>
+          <p class="lead">Este documento responde à pergunta que o Leo colocou na reunião de 17/09: existe algo que a Blip consiga fazer no Long Tail que seja melhor do que o que o time da Bia já dispara hoje em ~15 canais — e que gere incrementalidade suficiente para pagar o custo da Blip e do WhatsApp? Aqui está a hipótese única, o gatilho, a régua de mensagens e a arquitetura por trás dessa aposta — no nível de especificidade que o Leo pediu, não uma lista de ideias.</p>
+
+          <div class="istats">
+            <div class="istat"><div class="n">+400</div><div class="l">Parceiros globais</div></div>
+            <div class="istat"><div class="n">+4k</div><div class="l">Clientes</div></div>
+            <div class="istat"><div class="n">+28M</div><div class="l">Sessões / mês</div></div>
+            <div class="istat"><div class="n">+400M</div><div class="l">Mensagens / mês</div></div>
+          </div>
+          <div class="awards">
+            <span class="award">Finance Best-in-Class · Use Case Maker 2024</span>
+            <span class="award">Click to WhatsApp Most Relevant Player 2025 & 2026</span>
+            <span class="award">Revenue Growth Spotlight 2023 & 2024</span>
+          </div>
+        </div>
+
+        <div class="band">
+          <span class="k">Relacionamento atual</span>
+          <p>A Blip já opera dentro da frente de <b style="color:var(--text)">Sellers SMB e Long Tail Brasil</b> do Mercado Pago: plataforma conversacional, o produto Go Personal, e uma célula de Professional Services dedicada — devs e Conversational Designers alocados especificamente a essa frente.</p>
+        </div>
+
+        <div class="two">
+          <div class="col moment">
+            <h3>O momento do Mercado Pago</h3>
+            <ul>
+              <li>Na faixa Long Tail com baixo share of wallet, <b style="color:var(--text)">mais de 90%</b> dos sellers estão fora de qualquer carteira de atendimento hoje.</li>
+              <li>Mesmo entre os que já usam mais de um produto MP (alto share of wallet), <b style="color:var(--text)">62%</b> seguem sem cobertura.</li>
+              <li>É a faixa de maior volume de sellers da base — e onde uma queda de TPV (sinal precoce de churn) não abre nenhuma conversa hoje, só entra na fila de disparo genérico.</li>
+            </ul>
+            <div class="q">"A gente praticamente não fala com ele." — Tatiana Akel, sobre o Long Tail (07/08)</div>
+          </div>
+          <div class="col why">
+            <h3>Por que a Blip</h3>
+            <ul>
+              <li>Arquitetura preparada para orquestrar múltiplos agentes — hoje 100% agentes Blip; a mesma arquitetura comporta, à frente, orquestrar também agentes próprios do Mercado Pago, sem lock-in de fornecedor.</li>
+              <li>Arquitetura conversacional com Agent Orchestrator, Agent Experts e Human Agent com AI copilot, já operando em escala.</li>
+              <li>LLM-agnóstica: usa o modelo mais adequado por agente, sem lock-in de fornecedor.</li>
+              <li>300 das 500 maiores companhias multi-indústria do mundo já usam Blip; mais de 50 marcas só no segmento financeiro.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="src-line"><b>Fontes:</b> deck "Sobre a Blip" (Google Drive, Liza Oshima) · ata de onboarding com Tatiana Akel (07/08/2026) · ata de reunião com Leonardo Vergani e Tatiana Akel (17/09/2026).</div>
+      </div>
+    </section>
+
+    <!-- ===================== DIAGNÓSTICO ===================== -->
+    <section class="panel" id="panel-diagnostico">
+      <div class="container">
+        <div class="section-title">
+          <div class="eyebrow">Onde o seller para de ser visto</div>
+          <h2>A jornada de atendimento e o ponto onde o Long Tail desaparece</h2>
+          <p>O Mercado Pago segmenta o atendimento a sellers por faturamento e capacidade de cobertura. O Long Tail (2–10k) é o último elo dessa cadeia — e o único sem nenhum modelo de atendimento dedicado.</p>
+        </div>
+
+        <div class="chain">
+          <div class="chain-node"><div class="t">Farming Assessorado</div><div class="d">Time interno (Mayara), ~10 executivos, faturamento 50k–200k+. Quase 100% já encarterado.</div></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="t">Consultor Certificado</div><div class="d">~330 consultores terceirizados, presenciais, faixa 15k–30k. Sem CRM/Go Personal — telefone pessoal.</div></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="t">Consultor Virtual</div><div class="d">Faixa 10k–30k, quando não há certificado disponível na região. Usa Action Online + Go Personal.</div></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node hot"><div class="t">Long Tail (2–10k)</div><div class="d">Sem modelo de atendimento. Alvo deste documento — proposta 100% agêntica.</div></div>
+        </div>
+
+        <div class="section-title" style="padding-top:36px">
+          <div class="eyebrow">% de sellers fora de carteira, por faixa de faturamento estável (3 meses)</div>
+          <h2 style="font-size:20px">Quanto mais baixa a faixa, maior o abandono</h2>
+        </div>
+        <div class="covgrid">
+          <div class="covcell ok"><div class="band-lbl">100k+/mês</div><div class="pct">0%</div></div>
+          <div class="covcell ok"><div class="band-lbl">50k/mês</div><div class="pct">13%</div></div>
+          <div class="covcell"><div class="band-lbl">30k/mês</div><div class="pct">15%</div></div>
+          <div class="covcell"><div class="band-lbl">15k/mês</div><div class="pct">46%</div></div>
+          <div class="covcell crit"><div class="band-lbl">Long Tail alto<br>share of wallet</div><div class="pct">62%</div></div>
+          <div class="covcell crit"><div class="band-lbl">Long Tail baixo<br>share of wallet</div><div class="pct">90%+</div></div>
+        </div>
+        <div class="covnote">% fora de qualquer carteira de atendimento. Dado citado por Tatiana Akel em reunião (onboarding, 07/08/2026) — sem planilha formal associada; segue marcado <span class="tagx s">a validar</span> desde o roadmap v1 (28/08/2026).</div>
+
+        <div class="section-title">
+          <div class="eyebrow">A baseline que qualquer proposta precisa superar</div>
+          <h2 style="font-size:20px">O que já existe hoje no Long Tail</h2>
+        </div>
+        <div class="prodgrid">
+          <div class="pil warn">
+            <span class="k">Hoje</span>
+            <p>O time da Bia já dispara milhares de campanhas automáticas por <b style="color:var(--text)">~15 canais diferentes</b>, incluindo WhatsApp, para esse público — inclusive para os não carteirizados. É disparo unidirecional: sem personalização por motivo, sem roteamento por perfil, sem captura de resposta estruturada. As métricas param na entrega e no clique, não chegam à resolução.</p>
+          </div>
+          <div class="pil">
+            <span class="k">O que muda com a Blip</span>
+            <p>Conversa bidirecional (texto, áudio ou foto), roteamento por motivo real de queda, e um dado que hoje não existe: o motivo de churn no Long Tail, capturado em escala e registrado — não apenas mais um envio.</p>
+          </div>
+        </div>
+
+        <div class="pil" style="margin-bottom:30px">
+          <span class="k">Por que um agente pode ir além do que o consultor humano consegue hoje</span>
+          <p>Mesmo nas faixas atendidas por consultor humano, a comparação de taxas esbarra em uma limitação operacional real: o consultor não tem acesso a todas as taxas abertas do seller — precisa abrir chamado em CX para conseguir. Um agente especialista com acesso direto às APIs de taxa do MP resolveria, para o Long Tail, algo que hoje nem o canal humano resolve bem.</p>
+        </div>
+
+        <div class="quote-block">
+          <p>"Como isso aqui pode ser melhor do que uma mensagem de WhatsApp que a gente já manda?"</p>
+          <div class="who">Leonardo Vergani · 17/09/2026</div>
+        </div>
+        <div class="quote-block">
+          <p>"Esse nicho adicional paga o custo de fazer isso, porque essa galera gera bem pouco resultado. Tem que gerar incrementalidade suficiente para pagar a conta de vocês e do WhatsApp. Se não é trivial, eu acho."</p>
+          <div class="who">Leonardo Vergani · 17/09/2026</div>
+        </div>
+
+        <div class="section-title">
+          <div class="eyebrow">Por que a versão anterior deste material não passou</div>
+          <h2 style="font-size:20px">Estrutura rica, tese de valor rasa</h2>
+        </div>
+        <div class="pil" style="margin-bottom:30px">
+          <p>Em 17/09, a Blip apresentou um material com cinco jornadas orquestradas, um orquestrador central e cases de outros clientes (Brasil Prev, Itaú). Leo classificou o conteúdo como estruturalmente rico, mas no <b style="color:var(--text)">mesmo nível de profundidade de uma conversa informal de um mês antes</b>: sem definição operacional de gatilho (o que exatamente conta como "queda de TPV"), sem tradução dos cases para os problemas específicos do MP, e sem a conta de incrementalidade que ele havia pedido explicitamente. Este documento existe para fechar exatamente esse gap: uma hipótese, não um cardápio de ideias.</p>
+        </div>
+
+        <div class="section-title">
+          <div class="eyebrow">Churn no Long Tail — o que já se sabe</div>
+          <h2 style="font-size:20px">O sinal existe. A conversa, não.</h2>
+        </div>
+        <div class="pil">
+          <p>Cerca de <b style="color:var(--text)">10% da carteira geral</b> do Mercado Pago está sempre em churn. O padrão mais grave é o "double churn": o seller toma crédito, para de pagar, o MP retém o que ele transaciona na maquininha para abater a dívida, e ele some do canal. "Netchurn" é a métrica que mede quem sai do churn e volta a ficar ativo — um dos três indicadores prioritários do consultor, junto com CPC e TPV incremental. Nenhum desses números existe hoje quebrado especificamente para o Long Tail — é uma das lacunas já endereçadas por e-mail em 28/09 (ver aba Próximos passos).</p>
+        </div>
+
+        <div class="src-line"><b>Fontes:</b> ata de onboarding com Tatiana Akel (07/08/2026) · ata de reunião com Leonardo Vergani (04/08/2026) · ata de reunião com Leonardo Vergani e Tatiana Akel (17/09/2026) · Roadmap Conversacional Farming v1 (28/08/2026).</div>
+      </div>
+    </section>
+
+    <!-- ===================== SOLUÇÃO ===================== -->
+    <section class="panel" id="panel-solucao">
+      <div class="container">
+        <div class="section-title">
+          <div class="eyebrow">Frente 1 de 2 priorizadas por Leo em 17/09 · Consultor Virtual pausado até esta fechar</div>
+          <h2>Long Tail: reengajamento por motivo real de queda</h2>
+        </div>
+
+        <span class="badge-v1">v1 · Começar por aqui</span>
+        <div class="hypocard">
+          <span class="k">Hipótese única</span>
+          <p>Nomear o motivo real da queda de TPV e abrir uma conversa de fato — não apenas mais um disparo — aumenta a taxa de resposta e a recuperação de TPV no Long Tail, seguindo o mesmo padrão já validado dentro da própria operação de Farming desta conta.</p>
+        </div>
+
+        <div class="section-title" style="padding-top:8px">
+          <h2 style="font-size:19px">Gatilho — separando "saber que caiu" de "saber por quê"</h2>
+          <p>O Mercado Pago não precisa saber o motivo da queda antes de começarmos: o motivo é o que a conversa descobre pela primeira vez, porque hoje ninguém pergunta. O gatilho só precisa do fato objetivo de que o seller está transacionando menos — dado que o MP já tem, por ser histórico de transação da própria maquininha.</p>
+        </div>
+        <div class="trigsplit">
+          <div class="trig pref">
+            <span class="tag">Preferencial</span>
+            <p>Plugar no modelo de previsão de churn que o próprio Leo mencionou que o MP já tem — descrito por ele como um "ping" que dispara quando a probabilidade de cancelamento de um seller aumenta. Pergunta de acesso via API/webhook já enviada por e-mail em 28/09 — resposta pendente.</p>
+          </div>
+          <div class="trig">
+            <span class="tag">Fallback</span>
+            <p>Regra simples e auditável: "o seller transacionou X% menos nas últimas 2 semanas comparado com a própria média histórica." Não depende de saber o motivo, só compara o seller com ele mesmo. Valor exato de X% <span class="tagx s">a validar</span> com o MP.</p>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--dim);line-height:1.65;margin:-8px 0 28px">Este gatilho não é um conceito novo para o MP: "queda de TPV" já é um dos critérios que hoje alimentam o score de priorização de agenda do Consultor Virtual e do Certificado (onboarding com Tatiana Akel, 07/08/2026). A proposta é estender um sinal que o MP já usa internamente para uma faixa que hoje não o recebe.</p>
+
+        <div class="section-title" style="padding-top:8px">
+          <h2 style="font-size:19px">Régua de escalonamento</h2>
+        </div>
+        <div class="journey">
+          <div class="jstep"><span class="num">01</span><div class="body"><b>D0 — gatilho disparado</b><p>Mensagem de discovery aberta: pergunta direta e humana sobre o que mudou, aceitando texto livre, áudio ou foto. Não é formulário.</p></div></div>
+          <div class="jstep"><span class="num">02</span><div class="body"><b>D+2 sem resposta</b><p>Repique com variação: pergunta fechada com botões, reduzindo o esforço de resposta.</p></div></div>
+          <div class="jstep"><span class="num">03</span><div class="body"><b>Resposta menciona taxa ou concorrente</b><p>Transborda para o agente especialista em taxas e concorrência — calculadora comparativa, tratamento de objeção.</p></div></div>
+          <div class="jstep"><span class="num">04</span><div class="body"><b>Resposta menciona outro motivo</b><p>Rota separada — sem insistir em oferta de taxa; o motivo é registrado (esse dado sozinho já é valioso, porque hoje não existe).</p></div></div>
+          <div class="jstep"><span class="num">05</span><div class="body"><b>Sem resposta em 7 dias</b><p>Sai da régua de alta intensidade, cai para cadência padrão de baixa frequência — evita fadiga de mensagem.</p></div></div>
+        </div>
+
+        <div class="section-title" style="padding-top:8px">
+          <h2 style="font-size:19px">Paralelo anonimizado que embasa a aposta</h2>
+          <p>Sem nome de cliente — traduzido para o problema do MP, como Leo pediu explicitamente.</p>
+        </div>
+        <div class="casegrid">
+          <div class="casecard">
+            <span class="src">Dentro desta própria conta</span>
+            <div class="casenums">
+              <div><div class="cn good">15%</div><div class="cl">resposta · template específico<br>(119 disparos)</div></div>
+              <div><div class="cn bad">1%</div><div class="cl">resposta · template genérico<br>(45.313 disparos)</div></div>
+            </div>
+            <p>Jornada de Dívida, squad Liverpool, jun/26. Mesma operação de Farming, ainda com volume pequeno, mas o padrão já apareceu dentro do próprio MP.</p>
+          </div>
+          <div class="casecard">
+            <span class="src">Outra vertical financeira atendida pela Blip</span>
+            <div class="casenums">
+              <div><div class="cn good">40%</div><div class="cl">engajamento · jornada<br>com motivo nomeado</div></div>
+              <div><div class="cn bad">8,1%</div><div class="cl">engajamento · jornada<br>genérica equivalente</div></div>
+            </div>
+            <p>Jornada de reengajamento bancário nomeando o motivo específico da queda, sem identificação do cliente.</p>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--dim);line-height:1.65;margin-bottom:8px">Leitura: o padrão "mensagem específica bate mensagem genérica" já está provado dentro da própria operação do Farming. A aposta do Long Tail é replicar esse padrão para queda de TPV/taxa — ainda não testado nessa faixa.</p>
+
+        <div class="section-title" style="padding-top:20px">
+          <h2 style="font-size:19px">A pergunta que decide tudo nesta frente</h2>
+        </div>
+        <div class="formula">
+          TPV incremental recuperado por seller × nº de sellers atingidos<br>
+          <span style="color:var(--mute)">vs.</span><br>
+          custo Blip + Meta por seller / mês
+          <br><br>
+          <span style="color:var(--client)">Ordem de grandeza já conhecida:</span> o pool total de sellers não encarterados (todas as faixas, não só Long Tail) é de "~30 e poucos mil" — citado por Tatiana Akel no onboarding de 07/08/2026, ainda a confirmar e sem fatiamento por faixa de TPV.
+          <br><br>
+          <span class="gap">Faltam para virar números reais:</span> essa fatia específica do Long Tail dentro dos ~30 mil · TPV médio da faixa · churn rate atual — nenhum compartilhado até 28/09 (perguntas já em aberto por e-mail).
+        </div>
+
+        <div class="agreed">
+          <h3>Já acordado com Leo e Tatiana (17/09)</h3>
+          <ul>
+            <li>Long Tail e Consultor Virtual foram as duas frentes priorizadas por Leo — Consultor Virtual pausado até fecharmos esta.</li>
+            <li>Leo autorizou a Blip a falar diretamente com outras pessoas do time dele, incluindo o time da Bia, para levantar hipóteses e dados de campanhas em curso.</li>
+            <li>Prazo: prévia para Tatiana em ~1 semana da reunião, material completo com dados reais em 2 semanas — condição explícita de Leo para comparecer à próxima sessão.</li>
+            <li>E-mail com as perguntas específicas (acesso ao modelo de churn, tamanho da base, TPV médio, o que a Bia já faz hoje) foi enviado em 28/09.</li>
+          </ul>
+        </div>
+
+        <div class="section-title" style="padding-top:8px">
+          <h2 style="font-size:19px">Detalhes ainda em aberto</h2>
+        </div>
+        <div class="checklist">
+          <div class="check-item"><span class="box"></span>Valor exato do threshold de fallback (queda de X% em Y dias).</div>
+          <div class="check-item"><span class="box"></span>Desenho completo do agente especialista em taxas e concorrência.</div>
+          <div class="check-item"><span class="box"></span>Confirmar se a jornada é 100% IA sem exceção humana, ou se há um caso de exceção (ex.: aprovação final de mudança de taxa).</div>
+          <div class="check-item"><span class="box"></span>Validação de tom e copy com Conversational Design e/ou compliance do Mercado Pago.</div>
+        </div>
+
+        <div class="src-line"><b>Fontes:</b> ata de reunião com Leonardo Vergani e Tatiana Akel (17/09/2026) · rascunho de hipóteses Long Tail / Consultor Virtual (17/09/2026) · revisão executiva Jornada de Dívida (12/08/2026) · A Corrida da Retenção — leitura de mercado (28/08/2026) · e-mail de perguntas enviado a Leo e Tatiana (28/09/2026).</div>
+      </div>
+    </section>
+
+    <!-- ===================== JORNADA ===================== -->
+    <section class="panel" id="panel-jornada">
+      <div class="container">
+        <div class="section-title">
+          <div class="eyebrow">Simulação navegável</div>
+          <h2>A conversa que substitui o disparo</h2>
+          <p>O caso validado a simular: reengajamento Long Tail por queda de TPV, com discovery, repique e transbordo para o agente especialista em taxas. Use os botões abaixo para avançar passo a passo pela conversa, do lado do seller.</p>
+        </div>
+
+        <div class="segs">
+          <div class="seg"><div class="t">Segmento</div><div class="d">TPV mensal entre 2k e 10k, baixo a médio share of wallet.</div></div>
+          <div class="seg"><div class="t">Situação hoje</div><div class="d">Sem cobertura de atendimento — "a gente praticamente não fala com ele".</div></div>
+          <div class="seg"><div class="t">Modelo proposto</div><div class="d">100% agêntico, sem transbordo humano por desenho — ver ressalva no passo 10.</div></div>
+        </div>
+
+        <div class="mock-wrap">
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="wa-header">
+                <div class="avatar">MP</div>
+                <div class="who">
+                  <div class="name">Mercado Pago <span class="v">✔</span></div>
+                  <div class="status">assistente virtual</div>
+                </div>
+              </div>
+              <div class="wa-body" id="waBody">
+
+                <div class="msg in step" data-step="1">
+                  <div class="tpl-tag">Template · marketing</div>
+                  <div class="bubble">Oi! Notei aqui que suas vendas na maquininha diminuíram recentemente. Tudo certo por aí? Se quiser, me conta rapidinho o que rolou — quero entender pra ver como posso te ajudar.</div>
+                  <span class="time">09:14</span>
+                </div>
+
+                <div class="msg in step" data-step="2">
+                  <div class="bubble">Oi de novo! Quero entender rapidinho o que aconteceu com sua maquininha ultimamente:</div>
+                  <span class="time">D+2 · 09:30</span>
+                </div>
+                <div class="qr-group step" data-step="2">
+                  <div class="qr">Troquei de maquininha</div>
+                  <div class="qr">Minhas vendas caíram</div>
+                  <div class="qr">Outro motivo</div>
+                </div>
+
+                <div class="msg out step" data-step="3">
+                  <div class="bubble">Troquei de maquininha</div>
+                  <span class="time">09:41</span>
+                </div>
+
+                <div class="msg in step" data-step="4">
+                  <div class="bubble">Entendi! Foi por causa da taxa, do atendimento, ou por outro motivo?</div>
+                  <span class="time">09:41</span>
+                </div>
+                <div class="qr-group step" data-step="4">
+                  <div class="qr">Taxa</div>
+                  <div class="qr">Atendimento</div>
+                  <div class="qr">Outro motivo</div>
+                </div>
+
+                <div class="msg out step" data-step="5">
+                  <div class="bubble">Taxa</div>
+                  <span class="time">09:42</span>
+                </div>
+
+                <div class="msg in step" data-step="6">
+                  <div class="bubble">Consegue me mandar a taxa que te ofereceram? Pode ser print ou foto mesmo.</div>
+                  <span class="time">09:43</span>
+                </div>
+
+                <div class="msg out img step" data-step="7">
+                  <div class="bubble"><div class="ph">📷</div></div>
+                  <span class="time">09:45</span>
+                </div>
+
+                <div class="pcard step" data-step="8">
+                  <div class="ph2">Comparativo de taxas</div>
+                  <div class="pb">
+                    <div class="row"><span>Crédito à vista</span><span class="tag2">a preencher</span></div>
+                    <div class="row"><span>Parcelado</span><span class="tag2">a preencher</span></div>
+                    <div class="row"><span>Antecipação</span><span class="tag2">a preencher</span></div>
+                  </div>
+                </div>
+                <div class="msg in step" data-step="8">
+                  <div class="bubble">Show, comparei aqui com a tabela vigente. Dependendo de como você mais recebe — à vista ou parcelado — pode valer a pena revisar sua condição com a gente.</div>
+                  <span class="time">09:47</span>
+                </div>
+                <div class="qr-group step" data-step="8">
+                  <div class="qr">Quero revisar minha taxa</div>
+                  <div class="qr">Prefiro manter como está</div>
+                </div>
+
+                <div class="msg out step" data-step="9">
+                  <div class="bubble">Quero revisar minha taxa</div>
+                  <span class="time">09:48</span>
+                </div>
+
+                <div class="msg in step" data-step="10">
+                  <div class="bubble">Perfeito! Registrei seu interesse — uma pessoa do time confirma a nova condição em até 1 dia útil. Não precisa fazer mais nada por aqui.</div>
+                  <span class="time">09:48</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="mock-cap">
+            <div class="step-eyebrow">Passo <span id="stepNum">1</span> de 10</div>
+            <h3 id="stepTitle">D0 — discovery aberto</h3>
+            <p id="stepDesc">Mensagem de template, disparada pelo gatilho (ping do modelo de churn ou fallback de queda %). Tom acolhedor, aceita texto, áudio ou foto — não é formulário.</p>
+            <div class="mock-nav">
+              <button class="mock-btn" id="mockPrev">‹ Anterior</button>
+              <span class="mock-count" id="mockCount">1 / 10</span>
+              <button class="mock-btn" id="mockNext">Próximo ›</button>
+              <button class="mock-btn" id="mockReset">↻</button>
+            </div>
+            <div class="mock-dots" id="mockDots"></div>
+          </div>
+        </div>
+
+        <div class="roi-note"><b>Nota de precisão:</b> os campos do comparativo de taxas (passo 8) estão marcados "a preencher" de propósito — os parâmetros reais dependem da tabela de taxas vigente do Mercado Pago e não foram inventados aqui. A taxa de resposta e conversão desta jornada específica também não existe ainda: os únicos números reais disponíveis hoje são os padrões análogos já citados na aba Solução (15% vs. 1%; 40% vs. 8,1%) — projeção ilustrativa de comportamento, <b>a validar em A/B real no Long Tail.</b></div>
+
+        <div class="src-line"><b>Fontes:</b> rascunho de hipóteses Long Tail (17/09/2026, copy D0/D+2) · ata de reunião com Leonardo Vergani e Tatiana Akel (17/09/2026, régua e transbordo).</div>
+      </div>
+    </section>
+
+    <!-- ===================== ARQUITETURA ===================== -->
+    <section class="panel" id="panel-arch">
+      <div class="container">
+        <section class="arch-hero">
+          <div class="hero-grid">
+            <div>
+              <div class="eyebrow">Arquitetura híbrida de orquestração</div>
+              <h1>Sistemas conversacionais lá e aqui,<br><span class="accent">conversando entre si.</span></h1>
+              <p>A Blip orquestra a jornada e os canais do Long Tail; a inteligência de churn e a decisão de negócio permanecem dentro do Mercado Pago — conectadas por protocolos abertos (A2A e MCP), com o LLM mais adequado a cada agente.</p>
+            </div>
+            <div class="hero-meta">
+              <div><span class="label">Orquestrador (jornada + canais)</span><span class="value">Blip Studio · Multi-Agente · A2A · LLM-agnóstica</span></div>
+              <div><span class="label">Agentes de escala (Blip)</span><span class="value">Discovery D0/D+2 · Especialista em Taxas e Concorrência</span></div>
+              <div><span class="label">Inteligência & decisão (Mercado Pago)</span><span class="value">Modelo de previsão de churn · Fest (CRM) · Time da Bia</span></div>
+              <div><span class="label">Canais</span><span class="value">WhatsApp (primário) · agnóstico a RCS e outros</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-title">
+          <div class="eyebrow">Uma página · dois lados · um orquestrador</div>
+          <h2>O modelo híbrido — proposto para o Long Tail, generalizável ao restante do Farming</h2>
+          <p>O Blip Studio recebe a conversa no WhatsApp e roteia, agente a agente, para a inteligência que o Mercado Pago já mantém — devolvendo contexto e sinais (motivo real de churn) para enriquecê-la em tempo real.</p>
+          <div class="legend">
+            <div class="item"><span class="ln blue"></span> Orquestração agente-a-agente (A2A)</div>
+            <div class="item"><span class="ln green"></span> Contexto, dados e ferramentas via MCP</div>
+            <div class="item"><span class="ln white"></span> Canal de saída ao seller</div>
+          </div>
+        </section>
+
+        <div class="stage">
+          <div class="badge-real">Arquitetura proposta · a validar com Mercado Pago</div>
+          <div class="band-label">Onde o seller está</div>
+          <div class="channel">
+            <div class="chan-node wa"><div class="ic">W</div><div><div class="nm">WhatsApp</div><div class="sub">canal primário</div></div></div>
+            <div class="chan-node"><div class="ic" style="background:rgba(0,150,250,.2);color:var(--blip-2)">≡</div><div><div class="nm">RCS / outros</div><div class="sub">agnóstico de canal</div></div></div>
+          </div>
+          <div class="vconn"><div class="ll"></div><div class="ar">▼</div></div>
+          <div class="hub">
+            <div class="hub-left">
+              <div class="hub-mark">b</div>
+              <div class="hub-txt"><div class="t">Blip Studio — Orquestrador de jornada e canais</div><div class="s">Recebe a conversa, identifica o motivo de queda e roteia para o agente certo — com o LLM que fizer mais sentido para cada tarefa.</div></div>
+            </div>
+            <div class="hub-proto"><span class="p">MULTI-AGENTE</span><span class="p">A2A</span><span class="p">MCP</span><span class="p">LLM-AGNÓSTICA</span></div>
+          </div>
+          <div class="vconn-split"><div class="ll"></div><div class="ll"></div></div>
+          <div class="split">
+            <div class="side aqui">
+              <div class="side-head"><div class="h">Camada Blip — agentes de escala</div><div class="where">Aqui</div></div>
+              <div class="node"><div class="dot"></div><div class="nbody"><div class="nt">Agent Discovery (D0/D+2) <span class="tagx a">agente</span></div><div class="nd">Abre a conversa, interpreta texto/áudio/foto, executa a régua de escalonamento.</div></div></div>
+              <div class="node"><div class="dot"></div><div class="nbody"><div class="nt">Agent Especialista em Taxas <span class="tagx a">agente</span></div><div class="nd">Calculadora comparativa e tratamento de objeção — desenho completo ainda a fechar.</div></div></div>
+              <div class="node"><div class="dot"></div><div class="nbody"><div class="nt">Governança, guia de estilo & cockpit <span class="tagx a">orquestra</span></div><div class="nd">Voz única da marca e visão unificada de motivo de churn capturado.</div></div></div>
+            </div>
+            <div class="bridge">
+              <div class="flow"><div class="proto">A2A</div><div class="arrows"><div class="arr-bi">◄────►</div><div class="arr-line"></div></div></div>
+              <div class="bridge-note">agentes conversam<br>com agentes</div>
+              <div class="flow"><div class="proto mcp">MCP</div><div class="arrows"><div class="arr-line g"></div><div class="arr-bi g">◄────►</div></div></div>
+              <div class="bridge-note">contexto, dados<br>e ferramentas</div>
+            </div>
+            <div class="side la">
+              <div class="side-head"><div class="h">Infraestrutura interna do Mercado Pago</div><div class="where">Lá</div></div>
+              <div class="node"><div class="dot"></div><div class="nbody"><div class="nt">Modelo de previsão de churn <span class="tagx y">agente</span></div><div class="nd">"Ping" de probabilidade de cancelamento — acesso via API/webhook a confirmar.</div></div></div>
+              <div class="node human"><div class="dot"></div><div class="nbody"><div class="nt">Aprovação comercial de taxa <span class="tagx h">humano</span></div><div class="nd">Ponto de exceção em aberto: 100% IA vs. confirmação humana final.</div></div></div>
+              <div class="node"><div class="dot"></div><div class="nbody"><div class="nt">Fest (CRM) <span class="tagx s">sistema</span></div><div class="nd">Registro de CPC, motivo de churn e tabulação do consultor.</div></div></div>
+              <div class="node"><div class="dot"></div><div class="nbody"><div class="nt">Campanhas do time da Bia <span class="tagx s">sistema</span></div><div class="nd">~15 canais de disparo hoje — ponto de coordenação, não de substituição.</div></div></div>
+            </div>
+          </div>
+          <div class="principle hybrid">
+            <div class="q">"</div>
+            <div class="pt">A Blip orquestra a jornada e os canais. <b>A inteligência de churn e a decisão comercial permanecem dentro do Mercado Pago.</b> Escalar a conversa sem abrir mão do controle do dado — e sem lock-in de LLM.</div>
+          </div>
+          <div class="principle guard">
+            <div class="q">⛨</div>
+            <div class="pt"><b>Guardrail:</b> a proposta original desta faixa é 100% agêntica, sem transbordo humano — mas a aprovação final de mudança de taxa pode exigir um ponto de exceção humana. Este é um dos itens explicitamente em aberto com Leo e Tatiana.</div>
+          </div>
+        </div>
+        <div class="meta-foot">
+          <div class="row"><span class="k">Construído em</span> Blip Studio · Multi-Agente · A2A · MCP</div>
+          <div class="row"><span class="k y">Princípio</span> Orquestrar, não substituir — inteligência de churn e decisão comercial ficam no Mercado Pago</div>
+          <div class="row"><span class="k">Setas azuis</span> A2A: agentes Blip ⇄ modelo de churn / sistemas do MP</div>
+          <div class="row"><span class="k y">Setas verdes</span> MCP: sinal de churn, dados de transação e tabelas de taxa como contexto</div>
+          <div class="row"><span class="k">Modelos</span> LLM-agnóstica · usa o modelo certo por agente, inclusive o do próprio Mercado Pago</div>
+          <div class="row"><span class="k y">Validado em</span> a validar — arquitetura proposta, pendente de confirmação de acesso ao modelo de churn</div>
+          <div class="row"><span class="k">Fontes</span> ata 17/09/2026 · onboarding 07/08/2026 · rascunho de hipóteses 17/09/2026</div>
+        </div>
+
+        <section class="section-title">
+          <div class="eyebrow">Por que a Blip como camada orquestradora</div>
+          <h2 style="font-size:20px">Orquestrar, não substituir</h2>
+        </section>
+        <div class="whycards">
+          <div class="pil"><span class="k">Middleware</span><p>A Blip fica entre a inteligência de churn do Mercado Pago e o Contato Inteligente da marca — não a substitui, orquestra a conversa em cima dela.</p></div>
+          <div class="pil"><span class="k">LLM-agnóstica</span><p>Sem lock-in de modelo: usa o LLM mais adequado por agente, incluindo modelos que o próprio Mercado Pago já opera internamente.</p></div>
+          <div class="pil"><span class="k">Protocolos abertos</span><p>Interoperabilidade via A2A e MCP — agentes conversam com agentes, contexto e dados fluem como ferramenta, não como integração fechada.</p></div>
+          <div class="pil"><span class="k">Do piloto ao ROI</span><p>95% dos pilotos de IA generativa em empresas não geram impacto real de negócio. Esta proposta nasce amarrada a uma métrica de incrementalidade, não a uma demo.</p></div>
+        </div>
+
+        <div class="src-line"><b>Fontes:</b> deck "Sobre a Blip" (tese de arquitetura conversacional) · ata de reunião com Leonardo Vergani e Tatiana Akel (17/09/2026) · rascunho de hipóteses Long Tail (17/09/2026).</div>
+      </div>
+    </section>
+
+    <!-- ===================== PRÓXIMOS PASSOS ===================== -->
+    <section class="panel" id="panel-proximos">
+      <div class="container">
+        <div class="section-title">
+          <div class="eyebrow">Faseamento honesto</div>
+          <h2>v1 destrava agora. v2 fecha o desenho. v3 é o piloto com números reais.</h2>
+        </div>
+
+        <div class="phasegrid">
+          <div class="phase now">
+            <div><div class="ph-tag">v1 · agora</div><div class="ph-when">até ~05/10</div></div>
+            <div class="ph-body"><b>Fechar as lacunas de dado</b><p>Respostas às 4 perguntas já enviadas por e-mail em 28/09 (acesso ao modelo de churn, tamanho da base Long Tail, TPV médio, churn rate). Em paralelo, conversar com o time da Bia sobre as campanhas atuais para o Long Tail — acesso já autorizado por Leo.</p></div>
+          </div>
+          <div class="phase">
+            <div><div class="ph-tag">v2 · após respostas</div><div class="ph-when">para a prévia com Tatiana</div></div>
+            <div class="ph-body"><b>Fechar o desenho da hipótese</b><p>Definir o threshold de fallback, desenhar o agente especialista em taxas, confirmar se a jornada é 100% IA ou tem exceção humana, e validar tom/copy com Conversational Design e compliance do MP.</p></div>
+          </div>
+          <div class="phase">
+            <div><div class="ph-tag">v3 · piloto</div><div class="ph-when">após aprovação de Leo</div></div>
+            <div class="ph-body"><b>Piloto controlado</b><p>Grupo teste vs. controle na base Long Tail, medindo taxa de resposta ao discovery, % que fecha em ajuste de oferta ou permanência, e recuperação de TPV — substituindo os placeholders desta v1 por números reais do próprio piloto.</p></div>
+          </div>
+        </div>
+
+        <div class="section-title" style="padding-top:6px">
+          <h2 style="font-size:19px">Lacunas em aberto — nada aqui foi inventado</h2>
+        </div>
+        <div class="gapgrid">
+          <div class="gapitem"><span class="dot2"></span><p>Acesso ao "ping" do modelo de churn do MP (API/webhook) ou definição alternativa de queda de TPV.</p></div>
+          <div class="gapitem"><span class="dot2"></span><p>Tamanho da base Long Tail (2–10k) não carteirizada, TPV médio e churn rate atual.</p></div>
+          <div class="gapitem"><span class="dot2"></span><p>Valor exato do threshold de fallback, caso o sinal de churn não esteja disponível a tempo.</p></div>
+          <div class="gapitem"><span class="dot2"></span><p>Desenho completo do agente especialista em taxas e concorrência.</p></div>
+          <div class="gapitem"><span class="dot2"></span><p>Confirmação de 100% IA sem exceção, ou ponto de aprovação humana para mudança de taxa.</p></div>
+          <div class="gapitem"><span class="dot2"></span><p>Validação de tom e copy com Conversational Design e/ou compliance do Mercado Pago.</p></div>
+        </div>
+
+        <div class="deadline">
+          <span class="k">Prazo crítico</span>
+          <p>Leo condicionou sua presença na próxima sessão ao recebimento de evidência de trabalho intermediário: prévia para Tatiana em ~1 semana da reunião de 17/09, material completo com dados reais em 2 semanas. "Se não receber nenhum e-mail, eu não vou entrar." O e-mail com as perguntas específicas já foi enviado em 28/09 — este documento é a prévia estrutural que sustenta esse compromisso.</p>
+        </div>
+
+        <div class="src-line"><b>Fontes:</b> ata de reunião com Leonardo Vergani e Tatiana Akel (17/09/2026) · rascunho de hipóteses Long Tail / Consultor Virtual (17/09/2026) · e-mail de perguntas enviado a Leo e Tatiana (28/09/2026).</div>
+        <div class="confidential">Blip × Mercado Pago — material de apoio · Classificação: Confidencial</div>
+      </div>
+    </section>
+
+    <!-- ===================== SOBRE A BLIP ===================== -->
+    <section class="panel" id="panel-sobre">
+      <div class="container">
+        <div class="hero">
+          <div class="eyebrow">Blip — Contato Inteligente</div>
+          <h1>E se as marcas pudessem falar com as pessoas assim como elas falam <span class="accent">com os amigos?</span></h1>
+          <p class="lead">Apps de mensagens são o novo browser. AI Agents são o novo motor. Essa é a tese por trás de cada jornada que a Blip constrói — inclusive a que este documento propõe para o Long Tail do Mercado Pago.</p>
+        </div>
+
+        <div class="two">
+          <div class="col">
+            <h3 style="color:var(--dim)">Ontem</h3>
+            <ul>
+              <li><b style="color:var(--text)">Websites & Browsers</b> — as marcas criavam as páginas; os consumidores navegavam e seguiam.</li>
+              <li><b style="color:var(--text)">Mobile Apps & Smartphones</b> — cada marca possuía seu próprio app e espaço mobile personalizado.</li>
+            </ul>
+          </div>
+          <div class="col why">
+            <h3>Agora</h3>
+            <ul>
+              <li><b style="color:var(--text)">Apps de mensagem como interface.</b> AI Agents como executores.</li>
+              <li>De páginas para conversas — o contato inteligente substitui a navegação por um diálogo contínuo, com contexto e memória.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-title" style="padding-top:20px">
+          <div class="eyebrow">Onde a disputa está acontecendo</div>
+          <h2 style="font-size:20px">A batalha da audiência e da infraestrutura</h2>
+        </div>
+        <div class="segs">
+          <div class="seg"><div class="t">Infrastructure Platforms (B2B)</div><div class="d">OpenAI · Microsoft Azure · Google Cloud · Amazon · Anthropic</div></div>
+          <div class="seg"><div class="t">AI-First Portals (B2C)</div><div class="d">ChatGPT · Gemini · Claude · Grok</div></div>
+          <div class="seg"><div class="t">Intelligent Contact</div><div class="d">WhatsApp · Google Messages · Meta AI · iMessage · Meta Llama AI</div></div>
+        </div>
+
+        <div class="quote-block" style="margin-top:26px">
+          <p style="font-size:20px;font-style:normal;font-weight:700;color:var(--text)">95% dos pilotos de IA generativa em empresas não criaram impacto real nos negócios.</p>
+          <div class="who">É por isso que este documento amarra cada hipótese a um gatilho, uma régua e uma conta de incrementalidade — não a uma demo.</div>
+        </div>
+
+        <div class="section-title" style="padding-top:12px">
+          <h2 style="font-size:20px">AI Transformation Journey</h2>
+        </div>
+        <div class="journey">
+          <div class="jstep"><span class="num">01</span><div class="body"><b>Digitalização da comunicação</b><p>Levar o relacionamento para o canal conversacional.</p></div></div>
+          <div class="jstep"><span class="num">02</span><div class="body"><b>Identificação de oportunidades de otimização</b><p>Mapear onde a conversa hoje é fraca, genérica ou inexistente.</p></div></div>
+          <div class="jstep"><span class="num">03</span><div class="body"><b>Desenvolvimento de Skills com AI Agents</b><p>Construir agentes especialistas para tarefas específicas — não um chatbot genérico.</p></div></div>
+          <div class="jstep"><span class="num">04</span><div class="body"><b>Automação de fluxos reais</b><p>Rodar em produção, com dados reais do cliente, não em ambiente de demonstração.</p></div></div>
+          <div class="jstep"><span class="num">05</span><div class="body"><b>ROI — Business Outcomes</b><p>Medir o resultado de negócio, não só engajamento.</p></div></div>
+        </div>
+
+        <div class="section-title" style="padding-top:12px">
+          <div class="eyebrow">Do deck "Sobre a Blip" — slide específico para o Mercado Pago</div>
+          <h2 style="font-size:20px">Visão futura: jornadas multi-agênticas orquestradas</h2>
+          <p>No Mercado Pago, a jornada financeira evolui de um conjunto de interações feitas por integrações isoladas para um sistema orquestrado de agentes inteligentes que ativam, expandem e monetizam o relacionamento com o usuário através do ciclo financeiro ponta a ponta.</p>
+        </div>
+        <div class="prodgrid">
+          <div class="pil"><span class="k">Discovery & Aquisição</span><p>Qualificação de leads · entry points · vendas automatizadas.</p></div>
+          <div class="pil"><span class="k">Onboarding & Engajamento</span><p>Comunicação proativa · self-service · WhatsApp integrado.</p></div>
+          <div class="pil"><span class="k">Transações, Consumo & Serviços</span><p>Status de serviços · gestão de faturas · estratégia de retenção.</p></div>
+          <div class="pil"><span class="k">Financeiro</span><p>Ofertas pré-aprovadas de crédito · renegociação e cobrança · upselling e cross-selling.</p></div>
+        </div>
+        <p style="font-size:13px;color:var(--dim);line-height:1.65;margin-bottom:8px">O Long Tail é exatamente o pedaço deste mapa que hoje não tem nenhum agente — só disparo. Ver aba <b style="color:var(--text)">Solução</b>.</p>
+
+        <div class="section-title" style="padding-top:20px">
+          <div class="eyebrow">Escala global</div>
+          <h2 style="font-size:20px">Quem já opera com a Blip</h2>
+        </div>
+        <div class="istats">
+          <div class="istat"><div class="n">+400</div><div class="l">Parceiros</div></div>
+          <div class="istat"><div class="n">+4k</div><div class="l">Clientes</div></div>
+          <div class="istat"><div class="n">+1,2k</div><div class="l">Blippers</div></div>
+          <div class="istat"><div class="n">+28M</div><div class="l">Sessões / mês</div></div>
+        </div>
+        <div class="awards">
+          <span class="award">300 das 500 maiores companhias multi-indústria</span>
+          <span class="award">+50 marcas no segmento financeiro</span>
+          <span class="award">+400M mensagens trafegadas / mês</span>
+        </div>
+
+        <div class="prodgrid" style="margin-top:8px">
+          <div class="pil">
+            <span class="k">Stellantis</span>
+            <p>Parceria desde 2019 na América do Sul — chatbots em Marketing, Customer Care, Serviços Conectados e Pós-vendas. Expansão global em 2023, com WhatsApp na Itália para o Fiat Topolino.</p>
+          </div>
+          <div class="pil">
+            <span class="k">Dell</span>
+            <p>Parceria desde 2019 no Brasil, primeiro chatbot desenhado para captação de leads e vendas. Expansão global em 2021 para Reino Unido, Alemanha, França, Canadá, Estados Unidos, Índia, Singapura, Malásia, Austrália e Nova Zelândia.</p>
+          </div>
+        </div>
+
+        <div class="section-title" style="padding-top:20px">
+          <div class="eyebrow">A mesma disciplina aplicada a este documento</div>
+          <h2 style="font-size:20px">Mesa de Performance — growth mindset em ciclos curtos</h2>
+          <p>Hipóteses, micro-segmentação A/B/C/D, ciclo 80% conversão / 20% aprendizado, ritual semanal de feedback. Resultado em 1 mês completo de mesa, em outra conta estratégica da Blip (mar/26, sem identificação do cliente):</p>
+        </div>
+        <div class="istats">
+          <div class="istat"><div class="n">R$11,3MM</div><div class="l">Produção geral · Top #2 em 6 meses</div></div>
+          <div class="istat"><div class="n">R$4,9MM</div><div class="l">Produção via NA · Top #1 em 6 meses</div></div>
+          <div class="istat"><div class="n">R$0,019</div><div class="l">CAC com &gt;R$70k · Top #1 histórico</div></div>
+          <div class="istat"><div class="n">R$27,61</div><div class="l">Custo NA / acordo · Top #1 em 6 meses</div></div>
+        </div>
+        <p style="font-size:13px;color:var(--dim);line-height:1.65;margin-bottom:8px">Aprendizados: segmentação certa rende +10 p.p. acima da média · gatilho de fraseologia certo, +6 p.p. · reengajamento low-cost cortou CAC em 23%. É essa mesma disciplina — hipótese, gatilho, medição, iteração — que estrutura a proposta de Long Tail nas próximas abas.</p>
+
+        <div class="src-line"><b>Fontes:</b> deck "Sobre a Blip" (Google Drive, Liza Oshima) — tese de mercado, AI Transformation Journey, visão multi-agêntica para Mercado Pago, big numbers, cases de expansão global (Stellantis, Dell) e Mesa de Performance.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ---- gate ----
+(function(){
+  var PASS = "MercadoPago1234";
+  var gate = document.getElementById('gate');
+  var app = document.getElementById('app');
+  var input = document.getElementById('gateInput');
+  var btn = document.getElementById('gateBtn');
+  var err = document.getElementById('gateErr');
+  var card = document.getElementById('gateCard');
+  function tryEnter(){
+    if(input.value === PASS){
+      gate.hidden = true;
+      app.hidden = false;
+    } else {
+      err.textContent = "Senha incorreta. Tente novamente.";
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    }
+  }
+  btn.addEventListener('click', tryEnter);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') tryEnter(); });
+})();
+
+// ---- tabs ----
+(function(){
+  var tabs = document.querySelectorAll('.tab');
+  var panels = document.querySelectorAll('.panel');
+  var map = {sobre:'panel-sobre',visao:'panel-visao',diagnostico:'panel-diagnostico',solucao:'panel-solucao',jornada:'panel-jornada',arch:'panel-arch',proximos:'panel-proximos'};
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('active'); });
+      panels.forEach(function(p){ p.classList.remove('active'); });
+      t.classList.add('active');
+      var id = map[t.dataset.tab];
+      var el = document.getElementById(id);
+      if(el) el.classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+})();
+
+// ---- whatsapp mockup stepper ----
+(function(){
+  var TOTAL = 10;
+  var cur = 1;
+  var titles = {
+    1:"D0 — discovery aberto",
+    2:"D+2 — repique com botões",
+    3:"Seller escolhe uma opção",
+    4:"Ramificação por motivo",
+    5:"Seller indica a taxa",
+    6:"Agente pede evidência",
+    7:"Seller envia foto",
+    8:"Especialista em taxas responde",
+    9:"Seller aceita revisão",
+    10:"Encaminhamento e fechamento"
+  };
+  var descs = {
+    1:"Mensagem de template, disparada pelo gatilho (ping do modelo de churn ou fallback de queda %). Tom acolhedor, aceita texto, áudio ou foto — não é formulário.",
+    2:"Sem resposta em 2 dias, entra o repique com 3 botões de resposta rápida — reduz o esforço de responder.",
+    3:"O clique no botão é registrado como mensagem do seller, iniciando a ramificação da régua.",
+    4:"O agente aprofunda com uma pergunta fechada para identificar a causa raiz da troca de maquininha.",
+    5:"Seller confirma que o motivo é taxa — a conversa transborda para o agente especialista em taxas e concorrência.",
+    6:"O agente especialista pede a evidência da oferta concorrente para poder comparar de forma concreta.",
+    7:"O seller responde com uma foto da tela do concorrente — recurso nativo do WhatsApp Business, sem app extra.",
+    8:"O agente monta um comparativo. Os valores ficam propositalmente em branco aqui — dependem da tabela de taxas vigente do MP, não foram inventados.",
+    9:"Seller topa revisar a taxa — sinal de intenção comercial capturado numa conversa que, hoje, seria só um disparo sem resposta.",
+    10:"Fechamento com expectativa clara de prazo. Nota: a confirmação final de taxa por uma pessoa do time é um dos pontos em aberto sobre o modelo 100% IA — ver aba Solução."
+  };
+  var stepNum = document.getElementById('stepNum');
+  var stepTitle = document.getElementById('stepTitle');
+  var stepDesc = document.getElementById('stepDesc');
+  var mockCount = document.getElementById('mockCount');
+  var waBody = document.getElementById('waBody');
+  var dotsWrap = document.getElementById('mockDots');
+  for(var i=1;i<=TOTAL;i++){
+    var d = document.createElement('span');
+    if(i===1) d.className='active';
+    dotsWrap.appendChild(d);
+  }
+  function render(){
+    var els = waBody.querySelectorAll('.step');
+    els.forEach(function(el){
+      var s = parseInt(el.dataset.step,10);
+      if(s <= cur){ el.classList.add('show'); } else { el.classList.remove('show'); }
+    });
+    stepNum.textContent = cur;
+    stepTitle.textContent = titles[cur];
+    stepDesc.textContent = descs[cur];
+    mockCount.textContent = cur + " / " + TOTAL;
+    var dots = dotsWrap.querySelectorAll('span');
+    dots.forEach(function(sp,idx){ sp.classList.toggle('active', idx < cur); });
+    document.getElementById('mockPrev').disabled = (cur===1);
+    document.getElementById('mockNext').disabled = (cur===TOTAL);
+    waBody.scrollTop = waBody.scrollHeight;
+  }
+  document.getElementById('mockNext').addEventListener('click', function(){ if(cur<TOTAL){ cur++; render(); } });
+  document.getElementById('mockPrev').addEventListener('click', function(){ if(cur>1){ cur--; render(); } });
+  document.getElementById('mockReset').addEventListener('click', function(){ cur=1; render(); });
+  render();
+})();
+</script>
+
+</body></html>
